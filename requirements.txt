@@ -1,4 +1,2 @@
-DateTime==4.7
-pyTelegramBotAPI==4.7.0
-SimpleQIWI==0.7
+pyTelegramBotAPI
 flask
