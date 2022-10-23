@@ -1,4 +1,4 @@
-TOKEN = '5643161841:AAFB5CkEfoGooG9DXa67Xqu-fCrVMsrqeKg'
+TOKEN = '5501106844:AAHowv_duJaS2QPWSRvwqEk5l3rYUDRc2hA'
 APP_URL='https://python-bot-data.herokuapp.com/'
 admin=5097960608
 
