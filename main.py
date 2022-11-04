@@ -11,7 +11,7 @@ logger.setLevel(logging.DEBUG)
 
 @bot.message_handler(commands=['start'])
 def start(message):
-    bot.send_message(message, f'Привет, {message.from_user.first_name}!')
+    bot.reply_to(message, f'Привет, {message.from_user.first_name}!')
 
 @server.route(f'/{TOKEN}', methods=['POST'])
 def redirect_message():
