@@ -17,7 +17,7 @@ def start(message):
     id=message.from_user.id
     name=message.from_user.first_name
     
-    conn=psycopg2.connect(URI, sslmode='require')
+    conn=psycopg2.connect(URI)
     cursor=conn.cursor()
     conn.commit()
 
