@@ -19,7 +19,7 @@ def start(message):
     id=message.from_user.id
     username=message.from_user.username
 
-    db_object.execute(f"SELECT id FROM user WHERE id='{id}'")
+    db_object.execute(f"SELECT id FROM user WHERE id={id}")
     result=db_object.fetchone()
     
     if not result:
