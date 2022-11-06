@@ -17,15 +17,14 @@ db_object=db_connection.cursor()
 @bot.message_handler(commands=['start'])
 def start(message):
     id=message.from_user.id
-    username=message.from_user.username
+    username=message.from_user.first_name
 
-    db_object.execute(f"SELECT id FROM user WHERE id={id}")
+    db_object.execute(f"SELECT id FROM users WHERE id={id}")
     result=db_object.fetchone()
     
-    if not result:
-        db_object.execute("INSERT INTO user (id, username, messages) VALUES (%s, %s, %s)", (id, username, 0))
-        db_connection.commit()
-        
+    if result is None:
+        db_object.execute("INSERT INTO users (id, username, messages) VALUES (%s, %s, %s)", (id, username, 0))
+        db_connection.commit()    
     bot.send_message(message.chat.id, f'Привет, {username}!')
         
 @server.route(f'/{TOKEN}', methods=['POST'])
