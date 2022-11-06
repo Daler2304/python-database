@@ -16,9 +16,8 @@ db_object=db_connection.cursor()
 
 @bot.message_handler(commands=['start'])
 def start(message):
-    
-    
     id=message.from_user.id
+    username=message.from_user.username
     bot.send_message(message.chat.id, f'Привет, {message.from_user.first_name}!')
 
     db_ovject.execute(f'SELECT id FROM users WHERE id={id}')
