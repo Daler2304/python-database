@@ -11,7 +11,7 @@ logger=telebot.logger
 logger.setLevel(logging.DEBUG)
 
 conn=psycopg2.connect(URI, sslmode='require')
-cursor=db_connection.cursor()
+cursor=conn.cursor()
 conn.commit()
 
 @bot.message_handler(commands=['start'])
