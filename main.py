@@ -10,19 +10,15 @@ server=Flask(__name__)
 logger=telebot.logger
 logger.setLevel(logging.DEBUG)
 
-conn=psycopg2.connect(URI, sslmode='require')
-cursor=conn.cursor()
-conn.commit()
 
+    
 @bot.message_handler(commands=['start'])
 def start(message):
     id=message.from_user.id
     name=message.from_user.first_name
-    cursor.execute(f"SELECT id FROM users WHERE id={id}")
-    if cursor.fetchone() is None:
-        cursor.execute("INSERT INTO users (id, username, messages) VALUES (?, ?, ?)", (id, name, 0))
-        conn.commit()
+    
     bot.send_message(message.chat.id, f"Привет, {name}!")
+    
 @server.route(f'/{TOKEN}', methods=['POST'])
 def redirect_message():
     json_string=request.get_data().decode('utf-8')
