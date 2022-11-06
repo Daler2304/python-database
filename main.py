@@ -10,17 +10,13 @@ server=Flask(__name__)
 logger=telebot.logger
 logger.setLevel(logging.DEBUG)
 
+db_connection=psycopg2.connect(URI, sslmode='require')
+db_object=db_connection.cursor()
 
 
 @bot.message_handler(commands=['start'])
 def start(message):
-    db_connection=psycopg2.connect(user="mjspvaqmszltlv",
-                                   password="8d870b00f05cd121f3ea189bb7f6f2874eed7dae9491cc26823ec0f210313c25",
-                                   host="ec2-63-32-248-14.eu-west-1.compute.amazonaws.com",
-                                   port="5432",
-                                   database="d17v178if4666k")
-    db_object=db_connection.cursor()
-    db_connection.commit()
+    
     
     id=message.from_user.id
     bot.send_message(message.chat.id, f'Привет, {message.from_user.first_name}!')
