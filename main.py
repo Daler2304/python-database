@@ -11,7 +11,7 @@ logger=telebot.logger
 logger.setLevel(logging.DEBUG)
 
 db_connection=psycopg2.connect(user="mjspvaqmszltlv",
-                              password=8d870b00f05cd121f3ea189bb7f6f2874eed7dae9491cc26823ec0f210313c25"",
+                              password="8d870b00f05cd121f3ea189bb7f6f2874eed7dae9491cc26823ec0f210313c25",
                               host="ec2-63-32-248-14.eu-west-1.compute.amazonaws.com",
                               port="5432",
                               database="d17v178if4666k"))
