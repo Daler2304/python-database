@@ -16,7 +16,7 @@ db_object=db_connection.cursor()
 @bot.message_handler(commands=['start'])
 def start(message):
     id=message.from_user.id
-    bot.reply_to(message, f'Привет, {message.from_user.first_name}!')
+    bot.send_message(message.chat.id, f'Привет, {message.from_user.first_name}!')
 
     db_ovject.execute(f'SELECT id FROM users WHERE id={id}')
     result=db_object.fetchone()
