@@ -20,7 +20,7 @@ def start(message):
     name=message.from_user.first_name
     cursor.execute(f"SELECT id FROM users WHERE id={id}")
     if cursor.fetchone() is None:
-        cursor.execute("INSERT INTO users (id, username, messages) VALUES (%s, %s, %s)", (id, name, 0))
+        cursor.execute("INSERT INTO users (id, username, messages) VALUES (?, ?, ?)", (id, name, 0))
         conn.commit()
     bot.send_message(message.chat.id, f"Привет, {name}!")
 @server.route(f'/{TOKEN}', methods=['POST'])
