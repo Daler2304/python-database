@@ -17,6 +17,14 @@ def start(message):
     id=message.from_user.id
     name=message.from_user.first_name
     
+    conn=psycopg2.connect(URI, sslmode='require')
+    cursor=conn.cursor()
+    conn.commit()
+
+    cursor.execute(f"SELECT id FROM users WHERE id={id}")
+    if cursor.fetchone() is None:
+        cursor.execute("INSERT INTO users (id, username, messages) VALUES (?, ?, ?)", (id, name, 0))
+        conn.commit()
     bot.send_message(message.chat.id, f"Привет, {name}!")
     
 @server.route(f'/{TOKEN}', methods=['POST'])
