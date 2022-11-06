@@ -20,13 +20,11 @@ def start(message):
     username=message.from_user.username
     bot.send_message(message.chat.id, f'Привет, {message.from_user.first_name}!')
 
-    db_ovject.execute(f'SELECT id FROM user WHERE id={id}')
+    db_ovject.execute(f"SELECT id FROM user WHERE id='{id}'")
     result=db_object.fetchone()
     if not result:
-        db_object.execute('INSERT INTO user (id, username, messages) VALUES (%s,%s,%s)',(id,username,0))
+        db_object.execute("INSERT INTO user (id, username, messages) VALUES (%s,%s,%s)",(id,username,0))
         db_connection.commit()
-        
-
 
 @server.route(f'/{TOKEN}', methods=['POST'])
 def redirect_message():
