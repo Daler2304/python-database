@@ -18,14 +18,16 @@ db_object=db_connection.cursor()
 def start(message):
     id=message.from_user.id
     username=message.from_user.username
-    bot.send_message(message.chat.id, f'Привет, {message.from_user.first_name}!')
 
     db_ovject.execute(f"SELECT id FROM user WHERE id='{id}'")
     result=db_object.fetchone()
+    
     if not result:
-        db_object.execute("INSERT INTO user (id, username, messages) VALUES (%s,%s,%s)",(id,username,0))
+        db_object.execute("INSERT INTO user (id, username, messages) VALUES (%s, %s, %s)", (id, username, 0))
         db_connection.commit()
-
+        
+    bot.send_message(message.chat.id, f'Привет, {username}!')
+        
 @server.route(f'/{TOKEN}', methods=['POST'])
 def redirect_message():
     json_string=request.get_data().decode('utf-8')
@@ -38,3 +40,5 @@ if __name__=='__main__':
     bot.remove_webhook()
     bot.set_webhook(url=APP_URL)
     server.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
+    
+    
