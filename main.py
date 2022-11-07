@@ -1,4 +1,5 @@
 import telebot
+from telebot import types
 import os
 from flask import Flask, request
 import logging
@@ -22,12 +23,25 @@ except (Exception, Error) as error:
 def start(message):
     id=message.from_user.id
     name=message.from_user.first_name
-    result=cursor.execute(f'SELECT id FROM users WHERE id={id}')
+    cursor.execute(f'SELECT id FROM users WHERE id={id}')
+    result=cursor.fetchone()
     if not result:
         cursor.execute('INSERT INTO users (id,username,messages) VALUES (%s,%s,%s)', (id,name,0))
         conn.commit()
-    bot.reply_to(message, f'Привет, {message.from_user.first_name}')
+        conn.close()
+    
+    markup=types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=False)
+    markup.add(
+        types.KeyboardButton('Привет')
+        )
+    bot.send_message(message.chat.id, f'Привет, {message.from_user.first_name}',reply_markup=markup)
 
+@bot.message_handler(content_types=['text'])
+def mess(message):
+    if message.text=='Привет':
+        bot.reply_to(message, f'Приветствую!')
+    else:
+        bot.send_message(message.chat.id, 'Я ещё новый, умею только приветсвовать')
 
 # Проверим, есть ли переменная окружения Хероку (как ее добавить смотрите ниже)
 if "HEROKU" in list(os.environ.keys()):
