@@ -1,43 +1,52 @@
-import os
-import logging
 import telebot
-import psycopg2
-from configure import *
+import os
 from flask import Flask, request
+import logging
+from configure import *
+import psycopg2
+from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 
-bot=telebot.TeleBot(TOKEN)
-server=Flask(__name__)
-logger=telebot.logger
-logger.setLevel(logging.DEBUG)
+bot = telebot.TeleBot(TOKEN)
 
+try:
+    conn=psycopg2.connect(URI, sslmode='require')
+    conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
+    cursor=conn.cursor()
+except (Exception, Error) as error:
+    print("Ошибка при работе с PostgreSQL", error)
 
     
+
+# Здесь пишем наши хэндлеры
 @bot.message_handler(commands=['start'])
 def start(message):
     id=message.from_user.id
     name=message.from_user.first_name
-    
-    conn=psycopg2.connect(URI)
-    cursor=conn.cursor()
-    conn.commit()
-
-    cursor.execute(f"SELECT id FROM users WHERE id={id}")
-    if cursor.fetchone() is None:
-        cursor.execute("INSERT INTO users (id, username, messages) VALUES (%s,%s,%s)", (id, name, 0))
+    result=cursor.execute(f'SELECT id FROM users WHERE id={id}')
+    if not result:
+        cursor.execute('INSERT INTO users (id,username,messages) VALUES (%s,%s,%s)', (id,name,0))
         conn.commit()
-    bot.send_message(message.chat.id, f"Привет, {name}!")
-    
-@server.route(f'/{TOKEN}', methods=['POST'])
-def redirect_message():
-    json_string=request.get_data().decode('utf-8')
-    update=telebot.types.Update.de_json(json_string)
-    bot.process_new_updates([update])
-    return '!', 200
+    bot.reply_to(message, f'Привет, {message.from_user.first_name}')
 
 
-if __name__=='__main__':
+# Проверим, есть ли переменная окружения Хероку (как ее добавить смотрите ниже)
+if "HEROKU" in list(os.environ.keys()):
+    logger = telebot.logger
+    telebot.logger.setLevel(logging.INFO)
+
+    server = Flask(__name__)
+    @server.route("/bot", methods=['POST'])
+    def getMessage():
+        bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
+        return "!", 200
+    @server.route("/")
+    def webhook():
+        bot.remove_webhook()
+        bot.set_webhook(url=APP_URL) # этот url нужно заменить на url вашего Хероку приложения
+        return "?", 200
+    server.run(host="0.0.0.0", port=os.environ.get('PORT', 5000))
+else:
+    # если переменной окружения HEROKU нету, значит это запуск с машины разработчика.  
+    # Удаляем вебхук на всякий случай, и запускаем с обычным поллингом.
     bot.remove_webhook()
-    bot.set_webhook(url=APP_URL)
-    server.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000)))
-    
-    
+    bot.polling(none_stop=True)
