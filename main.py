@@ -64,12 +64,13 @@ if "HEROKU" in list(os.environ.keys()):
         bot.remove_webhook()
         bot.set_webhook(url=APP_URL) # этот url нужно заменить на url вашего Хероку приложения
         return "?", 200
-    if __name__=='__main__':
-        bot.remove_webhook()
-        bot.set_webhook(url=APP_URL)
-        server.run(host="0.0.0.0", port=os.environ.get('PORT', 5000))
+    
 else:
     # если переменной окружения HEROKU нету, значит это запуск с машины разработчика.  
     # Удаляем вебхук на всякий случай, и запускаем с обычным поллингом.
     bot.remove_webhook()
     bot.polling(none_stop=True)
+if __name__=='__main__':
+        bot.remove_webhook()
+        bot.set_webhook(url=APP_URL)
+        server.run(host="0.0.0.0", port=os.environ.get('PORT', 5000))
