@@ -36,15 +36,28 @@ def start(message):
         )
     bot.send_message(message.chat.id, f'Привет, {message.from_user.first_name}', reply_markup=markup)
 
+@bot.message_handler(commands=['send'])
+def send(message):
+    if message.from_user.id==admin:
+        msg=bot.send_message(message.chat.id,'Введите сообщение для рассылки')
+        bot.register_next_step_handler(msg, send_message)
+
+def send_message(message):
+    cursor.execute('SELECT id FROM users')
+    for i in cursor.fetchall():
+        if message.text:
+            bot.send_message(i[0],f'{message.text}')
+        elif message.photo:
+            bot.send_photo(i[0], photo=message.photo[0].file_id, caption=f'{message.text}')
 @bot.message_handler(content_types=['text'])
 def mess(message):
     id=message.from_user.id
     if message.text=='Мой ID':
         bot.reply_to(message, f'Ваш ID: {id}')
     elif message.text=='Дата регистрации в боте':
-        cursor.execute(f'SELECT * FROM users WHERE id = {id}')
+        cursor.execute(f'SELECT date FROM users WHERE id = {id}')
         
-        for row in cursor.fetchall():
+        for row in cursor.fetchone():
             bot.send_message(message.chat.id, f'Дата регистрации: {row[2]}')
     else:
         bot.send_message(message.chat.id, 'Я ещё новый, умею только приветсвовать')
