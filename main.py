@@ -11,7 +11,7 @@ from datetime import datetime
 bot = telebot.TeleBot(TOKEN)
 
 date=datetime.now()
-day=date.strftime('%H:%M:%S %d/%m/%Y')
+day=date.strftime('%d/%m/%Y %H:%M:%S')
 
 conn=psycopg2.connect(URI, sslmode='require')
 conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
